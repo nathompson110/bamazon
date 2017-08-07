@@ -1,7 +1,7 @@
 var mysql = require('mysql');
 var inquirer = require('inquirer');
 var items = [];
-var itemLength = 12
+var itemLength = 0;
 var ans = 0;
 
 var connection = mysql.createConnection({
