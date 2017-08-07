@@ -86,9 +86,22 @@ function promptList() {
               " || Dept: " +
               res[i].deptartment_name +
               " || Price: " +
-              res[i].price
+              res[i].price +
+              " || Quantity: " +
+              res[i].stock_qty
           );
-          items.push(
+
+        }
+      });
+    };
+
+     function lowInventory(){
+         connection.query("SELECT * FROM products", function(err, res) {
+        itemLength = res.length;
+        console.log("\n");
+        for (var i = 0; i < res.length; i++) {
+            if (res[i].stock_qty < 5)
+          console.log(
             "ID: " +
               res[i].item_id +
               " || Product: " +
@@ -96,56 +109,86 @@ function promptList() {
               " || Dept: " +
               res[i].deptartment_name +
               " || Price: " +
-              res[i].price
+              res[i].price +
+               " || Quantity: " +
+              res[i].stock_qty
           );
 
         }
       });
-    };
+
+     }
+
+function addInventory() {
+  inquirer
+    .prompt({
+      name: "action",
+      type: "input",
+      message: "What is the id of the item you'd like to increase?"
+  
+    }).then(function(answer){
+        connection.query("SELECT * FROM products", function(err, res) {
+        itemLength = res.length;
+       ans = answer.action;
+    if (!(answer.action <= itemLength))
+      {console.log(itemLength);
+      addInventory()
+     
+      }else{ purchasing();
+      }
+    }
+    )
+});
+}
+
+
+
+
 
    
 
-// function purchasing() {
-//   inquirer
-//     .prompt({
-//       name: "quantity",
-//       type: "input",
-//       message: "How many would you like to purchase?"
-//     })
-//     .then(function(answer) {
-//       var query = "SELECT item_id, product_name, price, stock_qty FROM products WHERE ?";
-//       connection.query(query, { item_id: ans}, function(err, res) {
+function purchasing() {
+  inquirer
+    .prompt({
+      name: "quantity",
+      type: "input",
+      message: "How many would you like to add?"
+    })
+    .then(function(answer) {
+      var query = "SELECT item_id, product_name, price, stock_qty FROM products WHERE ?";
+      connection.query(query, { item_id: ans}, function(err, res) {
 
-//         for (var i = 0; i < res.length; i++) {
-//           var updateQuant = res[i].stock_qty - answer.quantity
-//           if (answer.quantity > res[i].stock_qty)
-//           {console.log("Sorry, there are only "+res[i].stock_qty +" left. Please select a different item or quantity")
-//         runSearch();
-//       }else if(isNaN(answer.quantity)){
-//         console.log("That is not a valid quantity.");
-//         purchasing()
-//       }else {
-//     var totalCost = res[i].price * answer.quantity
-//           console.log("Your purchase: " +res[i].product_name + "|| Quantity: "+ answer.quantity  +" ||Unit Price: " +res[i].price + "\n Total cost: " + totalCost);
-//            connection.query(
-//             "UPDATE products SET ? WHERE ?",
-//             [
-//               {
-//                   stock_qty: updateQuant
-//               },
-//               {
-//                 item_id: ans
-//               }
-//             ])
-//        connection.end();  
+        for (var i = 0; i < res.length; i++) {
+          var updateQuant = res[i].stock_qty + parseInt(answer.quantity,10);
+          console.log(res[i].stock_qty)
+          console.log(updateQuant);
+          if (!(res[i].stock_qty>0))
+          {console.log("Sorry, you need to choose a number greater than 0");
+        purchasing();
+      }else if(isNaN(answer.quantity)){
+        console.log("That is not a valid quantity.");
+        purchasing();
+      }else {
+          console.log("You have increased the quantity of " + res[i].product_name + " by " +answer.quantity);
+           connection.query(
+            "UPDATE products SET ? WHERE ?",
+            [
+              {
+                  stock_qty: updateQuant
+              },
+              {
+                item_id: ans
+              }
+            ])
+       connection.end();  
        
 
-//       }
+      }
        
-//         }
-//       });
+        }
+      });
     
   
 
-// });
-// }
+});
+}

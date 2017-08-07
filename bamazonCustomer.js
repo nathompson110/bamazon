@@ -84,7 +84,7 @@ function purchasing() {
       connection.query(query, { item_id: ans}, function(err, res) {
 
         for (var i = 0; i < res.length; i++) {
-          var updateQuant = res[i].stock_qty - answer.quantity
+          var updateQuant = res[i].stock_qty - parseInt(answer.quantity,10);
           if (answer.quantity > res[i].stock_qty)
           {console.log("Sorry, there are only "+res[i].stock_qty +" left. Please select a different item or quantity")
         runSearch();
