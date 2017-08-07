@@ -104,7 +104,7 @@ function purchasing() {
                 item_id: ans
               }
             ])
-       runSearch();  
+       connection.end();  
        
 
       }
