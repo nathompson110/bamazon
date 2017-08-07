@@ -51,29 +51,7 @@ function promptList() {
     });
 }
 
-// function runSearch() {
-//   inquirer
-//     .prompt({
-//       name: "action",
-//       type: "input",
-//       message: "What is the id of the item you'd like to purchase?"
-  
-//     }).then(function(answer){
-//      ans = answer.action;
-//     if (!(answer.action <= itemLength))
-//       {console.log("Please enter a valid ID number");
-//       runSearch()
-     
-//       }else{ purchasing();
-//       }
-//     }
-//     )
-// };
-
-
-
-
-    function listOptions() {
+function listOptions() {
       connection.query("SELECT * FROM products", function(err, res) {
         itemLength = res.length;
         console.log("\n");
@@ -116,7 +94,7 @@ function promptList() {
 
         }
       });
-
+connection.end();
      }
 
 function addInventory() {
@@ -140,12 +118,6 @@ function addInventory() {
     )
 });
 }
-
-
-
-
-
-   
 
 function purchasing() {
   inquirer
@@ -192,3 +164,61 @@ function purchasing() {
 
 });
 }
+
+function addProduct(){
+  inquirer
+    .prompt([
+      {
+        name: "item",
+        type: "input",
+        message: "What is the name of the item you would like to add?"
+      },
+      {
+        name: "dept",
+        type: "input",
+        message: "What department would you like to place your item in?"
+      },
+      {
+        name: "price",
+        type: "input",
+        message: "What is the price of the item?",
+        validate: function(value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
+        }
+      },
+      {
+        name: "quantity",
+        type: "input",
+        message: " What is the quantity of this item?",
+        validate: function(value) {
+          if (isNaN(value) === false) {
+            return true;
+          }
+          return false;
+        }
+      }
+    ])
+    .then(function(answer) {
+      // when finished prompting, insert a new item into the db with that info
+      connection.query(
+        "INSERT INTO products SET ?",
+        {
+          product_name: answer.item,
+          deptartment_name: answer.dept,
+          price: answer.price,
+          stock_qty: answer.quantity
+        }
+        // function(err) {
+        //   if (err) throw err;
+        //   console.log("Your item has been added.");
+        
+        // }
+      )
+      console.log( "Added: "+ answer.item + " || Quantity: " + answer.quantity)
+      promptList();
+    });
+   
+};
