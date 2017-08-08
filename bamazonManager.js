@@ -71,9 +71,11 @@ function listOptions() {
 
         }
       });
+   
     };
 
      function lowInventory(){
+
          connection.query("SELECT * FROM products", function(err, res) {
         itemLength = res.length;
         console.log("\n");
@@ -94,10 +96,11 @@ function listOptions() {
 
         }
       });
-connection.end();
+ 
      }
 
 function addInventory() {
+  listOptions()
   inquirer
     .prompt({
       name: "action",
@@ -117,6 +120,7 @@ function addInventory() {
     }
     )
 });
+
 }
 
 function purchasing() {
@@ -132,8 +136,8 @@ function purchasing() {
 
         for (var i = 0; i < res.length; i++) {
           var updateQuant = res[i].stock_qty + parseInt(answer.quantity,10);
-          console.log(res[i].stock_qty)
-          console.log(updateQuant);
+          console.log("Previous Quantity: " +res[i].stock_qty)
+          console.log("Current Quantity:" +updateQuant);
           if (!(res[i].stock_qty>0))
           {console.log("Sorry, you need to choose a number greater than 0");
         purchasing();
@@ -202,7 +206,7 @@ function addProduct(){
       }
     ])
     .then(function(answer) {
-      // when finished prompting, insert a new item into the db with that info
+     
       connection.query(
         "INSERT INTO products SET ?",
         {
@@ -211,14 +215,9 @@ function addProduct(){
           price: answer.price,
           stock_qty: answer.quantity
         }
-        // function(err) {
-        //   if (err) throw err;
-        //   console.log("Your item has been added.");
-        
-        // }
       )
       console.log( "Added: "+ answer.item + " || Quantity: " + answer.quantity)
-      promptList();
+     
     });
    
 };
